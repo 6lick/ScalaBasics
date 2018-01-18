@@ -66,15 +66,14 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
   def xor(a: Boolean, b: Boolean): Boolean = {a^b}
 
   def repeat(s: String, n: Int): String = {
+    require(n>(-1),"input must be postive")
     var x = s
-    if (n < 0){
-      throw new java.lang.IllegalArgumentException("invalid input")
+    if (n == 0 ){
+      return ""
     }
-    if (n == 0 ) x = ""
 
     else {
-      x = x.concat(s)
-      repeat(x, n-1)
+      return x.concat(repeat(x, n-1))
     }
     x
   }
