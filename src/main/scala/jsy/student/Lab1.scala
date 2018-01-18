@@ -8,10 +8,10 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
 
   /*
    * CSCI 3155: Lab 1
-   * <Your Name>
+   * Russell Decker
    *
    * Partner: <Your Partner's Name>
-   * Collaborators: <Any Collaborators>
+   * Collaborators: Chris Scarola
    */
 
   /*
@@ -55,11 +55,29 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
 
   /* Exercises */
 
-  def abs(n: Double): Double = ???
+  def abs(n: Double): Double = {
+    var x = n
+    if (n<0) {
+      x = -x
+    }
+    x
+  }
 
-  def xor(a: Boolean, b: Boolean): Boolean = ???
+  def xor(a: Boolean, b: Boolean): Boolean = {a^b}
 
-  def repeat(s: String, n: Int): String = ???
+  def repeat(s: String, n: Int): String = {
+    var x = s
+    if (n < 0){
+      throw new java.lang.IllegalArgumentException("invalid input")
+    }
+    if (n == 0 ) x = ""
+
+    else {
+      x = x.concat(s)
+      repeat(x, n-1)
+    }
+    x
+  }
 
   def sqrtStep(c: Double, xn: Double): Double = ???
 
