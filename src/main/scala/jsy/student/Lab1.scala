@@ -10,8 +10,8 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
    * CSCI 3155: Lab 1
    * Russell Decker
    *
-   * Partner: <Your Partner's Name>
-   * Collaborators: Chris Scarola
+   * Partner: Chris Scarola
+   * Collaborators:
    */
 
   /*
@@ -67,22 +67,32 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
 
   def repeat(s: String, n: Int): String = {
     require(n>(-1),"input must be postive")
-    var x = s
-    if (n == 0 ){
-      return ""
+    if (n == 0 ) return ""
+    else {
+      return s.concat(repeat(s, n-1))
     }
 
-    else {
-      return x.concat(repeat(x, n-1))
-    }
-    x
   }
 
-  def sqrtStep(c: Double, xn: Double): Double = ???
+  def sqrtStep(c: Double, xn: Double): Double = {
+    require(c > -1, "cannot take square root of negative number")
+    var y = 0.0
+    y = xn - (Math.pow(xn,2) - c)./(2*xn)
+    y
+  }
 
-  def sqrtN(c: Double, x0: Double, n: Int): Double = ???
+  def sqrtN(c: Double, x0: Double, n: Int): Double = {
+    require(c >= 0 & x0 >= 0 & n >= 0)
+    if(n == 0) return x0
+    return sqrtN(c, sqrtStep(c,x0), n-1)
 
-  def sqrtErr(c: Double, x0: Double, epsilon: Double): Double = ???
+  }
+
+  def sqrtErr(c: Double, x0: Double, epsilon: Double): Double = {
+    require(c >= 0 & epsilon > 0)
+    if(Math.abs(Math.pow(x0,2)-c) < epsilon)return x0
+    sqrtErr(c, sqrtStep(c,x0), epsilon)
+  }
 
   def sqrt(c: Double): Double = {
     require(c >= 0)
@@ -100,12 +110,14 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
   def repOk(t: SearchTree): Boolean = {
     def check(t: SearchTree, min: Int, max: Int): Boolean = t match {
       case Empty => true
-      case Node(l, d, r) => ???
+      case Node(l, d, r) => check(l, min, d) && check(r, d, max) && d >= min && d < max
     }
     check(t, Int.MinValue, Int.MaxValue)
   }
-
-  def insert(t: SearchTree, n: Int): SearchTree = ???
+  def insert(t: SearchTree, n: Int): SearchTree = t match {
+    case Empty => Node(Empty,n,Empty)
+    case Node(l, d, r) => if
+  }
 
   def deleteMin(t: SearchTree): (SearchTree, Int) = {
     require(t != Empty)
