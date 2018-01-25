@@ -8,9 +8,9 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
 
   /*
    * CSCI 3155: Lab 1
-   * <Your Name>
+   * Chris Scarola
    *
-   * Partner: <Your Partner's Name>
+   * Partner: Russell Decker
    * Collaborators: <Any Collaborators>
    */
 
@@ -55,17 +55,28 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
 
   /* Exercises */
 
-  def abs(n: Double): Double = ???
+  def abs(n: Double): Double = {if (n < 0) -n else n}
 
-  def xor(a: Boolean, b: Boolean): Boolean = ???
+  def xor(a: Boolean, b: Boolean): Boolean = { if (a == b) false else true }
 
-  def repeat(s: String, n: Int): String = ???
+  def repeat(s: String, n: Int): String = {
+    require(n >= 0)
+    if (n == 0) "" else repeat(s,n-1).concat(s)
+  }
 
-  def sqrtStep(c: Double, xn: Double): Double = ???
+  def sqrtStep(c: Double, xn: Double): Double = { xn - ((xn * xn) - c) / (2 * xn)}
 
-  def sqrtN(c: Double, x0: Double, n: Int): Double = ???
+  def sqrtN(c: Double, x0: Double, n: Int): Double = {
+    require(c >= 0 & n >= 0)
+    if (n == 0) return x0
+    sqrtN(c,sqrtStep(c, x0),n-1)
+  }
 
-  def sqrtErr(c: Double, x0: Double, epsilon: Double): Double = ???
+  def sqrtErr(c: Double, x0: Double, epsilon: Double): Double = {
+    require(c >= 0 & epsilon > 0)
+    if (abs((x0 * x0) - c) < epsilon) return x0
+    sqrtErr(c, sqrtStep(c, x0), epsilon)
+  }
 
   def sqrt(c: Double): Double = {
     require(c >= 0)
@@ -83,12 +94,15 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
   def repOk(t: SearchTree): Boolean = {
     def check(t: SearchTree, min: Int, max: Int): Boolean = t match {
       case Empty => true
-      case Node(l, d, r) => ???
+      case Node(l, d, r) => (min <= d) && (d < max) && check(l,min,d) && check(r,d,max)
     }
     check(t, Int.MinValue, Int.MaxValue)
   }
 
-  def insert(t: SearchTree, n: Int): SearchTree = ???
+  def insert(t: SearchTree, n: Int): SearchTree = t match {
+    case Empty => Node(Empty, n, Empty)
+    case Node(l,d,r) => if(n >= d) Node(l,d,insert(r,n)) else Node(insert(l,n),d,r)
+  }
 
   def deleteMin(t: SearchTree): (SearchTree, Int) = {
     require(t != Empty)
@@ -96,17 +110,45 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
       case Node(Empty, d, r) => (r, d)
       case Node(l, d, r) =>
         val (l1, m) = deleteMin(l)
-        ???
+        (Node(l1, d, r),m)
     }
   }
+//  This is fun but it builds a new tree by completely deleting another tree
+//  instead of just taking the minimum of the right tree to replace the root node
+//  and I decided I don't like it enough, because it was less efficient
+//  def delete(t: SearchTree, n: Int): SearchTree = {
+//    def combine(l: SearchTree, r: SearchTree): SearchTree = {
+//      if(l != Empty) insert(r, deleteMin(l)_2) else r
+//    }
+//    t match {
+//      case Empty => Empty
+//      case Node(l,d,r) => if (d == n) combine(l,r) else if (n > d) Node(l, d, delete(r,n)) else Node(delete(l,n),d,r)
+//    }
+//  }
 
-  def delete(t: SearchTree, n: Int): SearchTree = ???
-
+  def delete(t: SearchTree, n: Int): SearchTree = {
+    t match {
+      case Empty => Empty
+      case Node(l,d,Empty) => if (d == n) l else Node(delete(l,n),d,Empty)
+      case Node(l,d,r) =>
+        if (d == n) {
+          val (r1, m) = deleteMin(r)
+          Node(l, m, r1)
+        }
+        else if (n > d) Node(l, d, delete(r,n))
+        else Node(delete(l,n),d,r)
+    }
+  }
   /* JavaScripty */
 
   def eval(e: Expr): Double = e match {
-    case N(n) => ???
-    case _ => ???
+    case N(n) => n
+    case Unary(Neg, e1) => -eval(e1)
+    case Binary(Times, e1, e2) => eval(e1) * eval(e2)
+    case Binary(Div, e1, e2) => eval(e1) / eval(e2)
+    case Binary(Plus, e1, e2) => eval(e1) + eval(e2)
+    case Binary(Minus, e1, e2) => eval(e1) - eval(e2)
+    case _ => throw new IllegalArgumentException
   }
 
  // Interface to run your interpreter from a string.  This is convenient
