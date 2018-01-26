@@ -116,7 +116,7 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
   }
   def insert(t: SearchTree, n: Int): SearchTree = t match {
     case Empty => Node(Empty,n,Empty)
-    case Node(l, d, r) => if
+    case Node(l, d, r) => if (n >= d) Node(l,d, insert(r,n)) else  Node(insert(l,n),d,r)
   }
 
   def deleteMin(t: SearchTree): (SearchTree, Int) = {
@@ -125,17 +125,35 @@ object Lab1 extends jsy.util.JsyApplication with jsy.lab1.Lab1Like {
       case Node(Empty, d, r) => (r, d)
       case Node(l, d, r) =>
         val (l1, m) = deleteMin(l)
-        ???
+        (Node(l1, d,r),m)
     }
   }
 
-  def delete(t: SearchTree, n: Int): SearchTree = ???
+
+  def delete(t: SearchTree, n: Int): SearchTree = {
+    def combine(l: SearchTree, r: SearchTree): SearchTree = {
+      if (l != Empty){
+        insert(r, deleteMin(l)_2)
+      }
+      else
+        r
+    }
+    t match {
+      case Empty => Empty
+      case Node(l,d,r)=> if (n == d) combine(l, r) else if (n >= d) Node(l,d, delete(r,n))  else Node(delete(l,n),d,r)
+    }
+  }
 
   /* JavaScripty */
 
   def eval(e: Expr): Double = e match {
-    case N(n) => ???
-    case _ => ???
+    case N(n) => n
+    case Unary(Neg, e1) => -eval(e1)
+    case Binary(Plus, e1, e2) => eval(e1) + eval(e2)
+    case Binary(Minus, e1, e2) => eval(e1) - eval(e2)
+    case Binary(Times, e1, e2) => eval(e1) * eval(e2)
+    case Binary(Div, e1, e2) => eval(e1) / eval(e2)
+    case _ => throw new UnsupportedOperationException
   }
 
  // Interface to run your interpreter from a string.  This is convenient
